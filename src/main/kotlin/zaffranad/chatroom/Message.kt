@@ -1,12 +1,12 @@
 package zaffranad.chatroom
 
 import java.time.LocalDateTime
-import java.util.*
 
 class Message(
-        var id: String,
-        var content: String,
-        var postedDate: LocalDateTime
+        val id: String,
+        val content: String,
+        val postedDate: LocalDateTime,
+        val postedBy: String
 ) {
 
 }

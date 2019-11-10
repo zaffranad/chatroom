@@ -1,35 +1,40 @@
 package zaffranad.chatroom
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.DirectProcessor
 import reactor.core.publisher.Flux
-import java.io.Console
-import java.time.Duration
+import reactor.core.publisher.FluxProcessor
+import reactor.core.publisher.FluxSink
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
 
-@RestController
-class MainController {
+@RestController()
+@RequestMapping("messages")
+class MainController() {
 
     var messages = HashMap<String, Message>();
+    final var messagesProcessor: FluxProcessor<Message, Message> = DirectProcessor.create();
+    final var messagesSink: FluxSink<Message>;
 
-    @PostMapping("/message")
-    fun postMessage(@RequestBody dto: MessageDto): String {
+    init {
+        messagesSink = messagesProcessor.sink()
+    }
+
+    @PostMapping("message")
+    fun postMessage(@RequestBody dto: MessageDto) {
         val message = Message(
                 UUID.randomUUID().toString(),
                 dto.content,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                dto.postedBy
         )
         messages[message.id] = message;
-        return messages.map { (_, v) -> "${v.id} ${v.content} ${v.postedDate}" }.joinToString { s -> "$s, " }
+        messagesSink.next(message);
     }
 
-    @GetMapping("/")
-    fun test(): Flux<String>{
-        return Flux.fromIterable(listOf("A", "B","A", "B","A", "B","A", "B","A", "B","A", "B","A", "B","A", "B","A", "B","A", "B","A", "B","A", "B"))
-                .delayElements(Duration.ofSeconds(3));
+    @GetMapping("/stream")
+    fun test(): Flux<String> {
+        return messagesProcessor.map { e -> "${e.content} ${e.postedDate}\n" }
     }
 }
