@@ -1,21 +1,19 @@
 package zaffranad.chatroom
 
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.DirectProcessor
-import reactor.core.publisher.Flux
-import reactor.core.publisher.FluxProcessor
-import reactor.core.publisher.FluxSink
+import reactor.core.publisher.*
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
 
+@CrossOrigin
 @RestController()
 @RequestMapping("messages")
 class MainController() {
 
-    var messages = HashMap<String, Message>();
-    final var messagesProcessor: FluxProcessor<Message, Message> = DirectProcessor.create();
-    final var messagesSink: FluxSink<Message>;
+    var messages = HashMap<String,   Message>();
+    private final var messagesProcessor: FluxProcessor<Message, Message> = DirectProcessor.create();
+    private final var messagesSink: FluxSink<Message>;
 
     init {
         messagesSink = messagesProcessor.sink()
@@ -27,14 +25,16 @@ class MainController() {
                 UUID.randomUUID().toString(),
                 dto.content,
                 LocalDateTime.now(),
-                dto.postedBy
+                dto.author
         )
         messages[message.id] = message;
         messagesSink.next(message);
     }
 
-    @GetMapping("/stream")
-    fun test(): Flux<String> {
-        return messagesProcessor.map { e -> "${e.content} ${e.postedDate}\n" }
+    @GetMapping("/realtime")
+    fun test(): Flux<MessageDto> {
+        return messagesProcessor.map {
+            message -> MessageDto(message.content, message.postedDate.toString(), message.postedBy)
+        }
     }
 }
