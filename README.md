@@ -4,7 +4,7 @@
 
 ## A chat in a room
 
-Chatroom is an place to chat, gossip, say good or bad things... it's simply an app you can install, deploy on a server, allowing people to connect on it and talk together
+Chatroom is a place to chat, gossip, say good or bad things... it's simply an app you can install, deploy on a server, allowing people to connect on it and talk together
 
 This is the backend, serving a REST API, build with Spring Boot 2 and Kotlin.
 
