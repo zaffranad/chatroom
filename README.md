@@ -8,21 +8,13 @@ Chatroom is a place to chat, gossip, say good or bad things... it's simply an ap
 
 This is the backend, serving a REST API, build with Spring Boot 2 and Kotlin.
 
-## Run and Watch!
+## Run it!
 
-While you're at the root of the repository:
+wip
 
-`npm run serve`
+## Use it?
 
-This will start the application on port 4200 (default)... or run the following to use a different port:
-
-`ng serve --watch --open`
-
-## Wanna deploy?
-
-Having fun with this app, if you want to build and deploy:
-
-`ng build --prod`
+wip
 
 ## Continuous Integration
 
